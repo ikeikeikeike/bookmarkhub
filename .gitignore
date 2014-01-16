@@ -1,0 +1,9 @@
+
+
+## for build coffee script
+/Gemfile
+/Guardfile
+/Gemfile.lock
+/bundle
+/.bundle
+/.ruby-version

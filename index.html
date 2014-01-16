@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Testing - Bookmarkhub.js</title>
+</head>
+<body>
+  <script type="text/javascript" src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <!-- <script type="text/javascript" src="//code.jquery.com/jquery-1.5.1.min.js"></script> -->
+  <script type="text/javascript" src="./bookmarkhub.js"></script>
+  <script type="text/javascript">
+  $(function() {
+    var testing, appendLog;
+
+    appendLog = function(provider, value, url) {
+      $('body').append('<p>' + provider + ': ' + JSON.stringify(value) + '<br /> ( ' + url + ' )');
+    }
+
+    testing = function(url) {
+      var counter;
+      counter = new Bookmarkhub.Counter(url, 5000);
+      counter.twitter(function(number) {
+        return appendLog('twitter', number, url);
+      });
+      counter.facebook(function(number) {
+        return appendLog('facebook', number, url);
+      });
+      counter.hatena(function(number) {
+        return appendLog('hatena', number, url);
+      });
+      counter.google(function(number) {
+        return appendLog('google', number, url);
+      });
+      counter.pocket(function(number) {
+        return appendLog('pocket', number, url);
+      });
+      counter.linkedin(function(number) {
+        return appendLog('linkedin', number, url);
+      });
+      counter.delicious(function(number) {
+        return appendLog('delicious', number, url);
+      });
+      counter.pinterest(function(number) {
+        return appendLog('pinterest', number, url);
+      });
+      counter.stumbleupon(function(number) {
+        return appendLog('stumbleupon', number, url);
+      });
+
+
+      var linker;
+      linker = new Bookmarkhub.Linker(url);
+      linker.twitter(function(linkObj) {
+        return appendLog('twitter', linkObj, url);
+      });
+      linker.facebook(function(linkObj) {
+        return appendLog('facebook', linkObj, url);
+      });
+      linker.hatena(function(linkObj) {
+        return appendLog('hatena', linkObj, url);
+      });
+      linker.google(function(linkObj) {
+        return appendLog('google', linkObj, url);
+      });
+      linker.pocket(function(linkObj) {
+        return appendLog('pocket', linkObj, url);
+      });
+      linker.linkedin(function(linkObj) {
+        return appendLog('linkedin', linkObj, url);
+      });
+      linker.delicious(function(linkObj) {
+        return appendLog('delicious', linkObj, url);
+      });
+      linker.pinterest(function(linkObj) {
+        return appendLog('pinterest', linkObj, url);
+      });
+      linker.stumbleupon(function(linkObj) {
+        return appendLog('stumbleupon', linkObj, url);
+      });
+    };
+
+    testing('http://google.com');
+    testing('http://twitter.com');
+    testing('http://ci.nii.ac.jp/naid/110009656663');
+    testing('http://www.google.com/registry/index.html');
+    testing('http://hadoop.apache.org/docs/r1.0.4/webhdfs.html');
+    testing('http://qiita.com/ktty1220/items/d1df9c66ca2663af03c7');
+
+    <!-- testing('http://hadoop.apache.org/docs/r1.0.4/webhdfs.html#OPEN'); // TODO: Error url fragment -->
+
+    testing('http://www.itmedia.co.jp/news/articles/1401/16/news095.html');
+    testing('http://blog.monochromegane.com/blog/2014/01/16/the-platinum-searcher/');
+    testing('http://blog.nodejs.org/2014/01/15/the-next-phase-of-node-js/index.html');
+    testing('https://code.facebook.com/posts/218678814984400/scaling-mercurial-at-facebook/')
+    testing('http://spock-framework-reference-documentation-ja.readthedocs.org/ja/spock-0.7-groovy-2.0_ja/index.html');
+  });
+  </script>
+</body>
+</html>

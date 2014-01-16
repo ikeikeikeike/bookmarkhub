@@ -1,0 +1,15 @@
+{
+  "name": "bookmarkhub.js",
+  "version": "0.8.0",
+  "main": "bookmarkhub.js",
+  "ignore": [
+    ".gitignore",
+    "README.rst",
+    "README.md",
+    "LICENSE",
+    "index.html"
+  ],
+  "dependencies": {
+    "jquery": ">=1.5.1"
+  }
+}

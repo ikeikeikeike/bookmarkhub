@@ -1,0 +1,30 @@
+{
+  "name": "bookmarkhub",
+  "title": "bookmarkhub",
+  "description": "This is bookmarkhub.",
+  "keywords": [
+    "bookmark",
+    "social",
+    "counter",
+    "bookmark counter",
+    "bookmark link"
+  ],
+  "version": "0.8.0",
+  "author": {
+    "name": "Tatsuo Ikeda",
+    "url": "http://about.me/ikeikeikeike"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://raw.github.com/ikeikeikeike/bookmarkhub/master/LICENSE"
+    }
+  ],
+  "homepage": "https://github.com/ikeikeikeike/bookmarkhub",
+  "bugs": "https://github.com/ikeikeikeike/bookmarkhub/issues",
+  "docs": "https://github.com/ikeikeikeike/bookmarkhub/wiki",
+  "download": "https://raw.github.com/ikeikeikeike/bookmarkhub/master/bookmarkhub.js"
+  "dependencies": {
+    "jquery": ">=1.5.1"
+  }
+}
