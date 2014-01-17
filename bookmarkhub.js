@@ -34,23 +34,29 @@
           localStorage.setItem(key, JSON.stringify(record));
         } catch (_error) {
           err = _error;
+          BH.storage.clear();
         }
       }
       return value;
     },
     load: function(key) {
-      var record;
+      var err, record;
       if (!localStorage) {
         return false;
       }
-      record = JSON.parse(localStorage.getItem(key));
+      try {
+        record = JSON.parse(localStorage.getItem(key));
+      } catch (_error) {
+        err = _error;
+        BH.storage.clear();
+      }
       if (!record) {
         return false;
       }
       if (new Date().getTime() < record.timestamp) {
         return JSON.parse(record.value);
       } else {
-        return localStorage.removeItem(key);
+        return BH.storage.clear();
       }
     },
     all: function() {
@@ -206,7 +212,8 @@
       return this.cachedRequest(BH.URLs.google(this.url), {
         dataType: 'json'
       }, function(data) {
-        return callback(data.query.results ? $(data.query.results.resources.content).find('#aggregateCount').text() : 0);
+        var _ref;
+        return callback(((_ref = data.query) != null ? _ref.results : void 0) ? $(data.query.results.resources.content).find('#aggregateCount').text() : 0);
       });
     };
 
@@ -250,8 +257,8 @@
       return this.cachedRequest(BH.URLs.stumbleupon(this.url), {
         dataType: 'json'
       }, function(data) {
-        var _ref;
-        return callback(((_ref = data.query.results.json.result) != null ? _ref.views : void 0) || 0);
+        var _ref, _ref1;
+        return callback(((_ref = data.query) != null ? (_ref1 = _ref.results.json.result) != null ? _ref1.views : void 0 : void 0) || 0);
       });
     };
 
@@ -267,95 +274,54 @@
     }
 
     Linker.prototype.schemelessUrl = function() {
-      return encodeURIComponent(this.url.replace(/^https?:\/\//, ''));
+      return this.url.replace(/^https?:\/\//, '');
+    };
+
+    Linker.prototype.linker = function(provider, link, callback) {
+      var me;
+      me = this;
+      return this.counter[provider](function(count) {
+        return callback({
+          count: count,
+          link: count ? link : void 0
+        });
+      });
     };
 
     Linker.prototype.twitter = function(callback) {
-      var me;
-      me = this;
-      return this.counter.twitter(function(count) {
-        return callback({
-          count: count,
-          link: count ? "https://twitter.com/search?q=" + (me.schemelessUrl()) : void 0
-        });
-      });
+      return this.linker('twitter', "https://twitter.com/search?q=" + (this.schemelessUrl()), callback);
     };
 
     Linker.prototype.facebook = function(callback) {
-      return this.counter.facebook(function(count) {
-        return callback({
-          count: count
-        });
-      });
+      return this.linker('facebook', false, callback);
     };
 
     Linker.prototype.hatena = function(callback) {
-      var me;
-      me = this;
-      return this.counter.hatena(function(count) {
-        return callback({
-          count: count,
-          link: count ? "http://b.hatena.ne.jp/entry/" + (me.schemelessUrl()) : void 0
-        });
-      });
+      return this.linker('hatena', "http://b.hatena.ne.jp/entry/" + (this.schemelessUrl()), callback);
     };
 
     Linker.prototype.google = function(callback) {
-      return this.counter.google(function(count) {
-        return callback({
-          count: count
-        });
-      });
+      return this.linker('google', false, callback);
     };
 
     Linker.prototype.pocket = function(callback) {
-      return this.counter.pocket(function(count) {
-        return callback({
-          count: count
-        });
-      });
+      return this.linker('pocket', false, callback);
     };
 
     Linker.prototype.linkedin = function(callback) {
-      var me;
-      me = this;
-      return this.counter.linkedin(function(count) {
-        return callback({
-          count: count
-        });
-      });
+      return this.linker('linkedin', false, callback);
     };
 
     Linker.prototype.delicious = function(callback) {
-      var me;
-      me = this;
-      return this.counter.delicious(function(count) {
-        return callback({
-          count: count,
-          link: count ? "https://previous.delicious.com/url/" + (BH.md5Hex(me.url)) : void 0
-        });
-      });
+      return this.linker('delicious', "https://previous.delicious.com/url/" + (BH.md5Hex(this.url)), callback);
     };
 
     Linker.prototype.pinterest = function(callback) {
-      var me;
-      me = this;
-      return this.counter.pinterest(function(count) {
-        return callback({
-          count: count
-        });
-      });
+      return this.linker('pinterest', false, callback);
     };
 
     Linker.prototype.stumbleupon = function(callback) {
-      var me;
-      me = this;
-      return this.counter.stumbleupon(function(count) {
-        return callback({
-          count: count,
-          link: count ? "http://www.stumbleupon.com/url/" + me.url : void 0
-        });
-      });
+      return this.linker('stumbleupon', "http://www.stumbleupon.com/url/" + this.url, callback);
     };
 
     return Linker;
@@ -385,7 +351,7 @@
           stumbleupon: s
         });
       }).fail(function(err) {
-        return console.log(err);
+        return BH.trace(err);
       });
     };
 
