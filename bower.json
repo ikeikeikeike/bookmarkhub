@@ -1,7 +1,8 @@
 {
   "name": "bookmarkhub.js",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "main": "bookmarkhub.js",
+  "author": "Tatsuo Ikeda",
   "ignore": [
     ".gitignore",
     "README.rst",
