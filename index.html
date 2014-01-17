@@ -18,7 +18,7 @@
 
     testing = function(url) {
       var counter;
-      counter = new Bookmarkhub.Counter(url, 5000);
+      counter = new Bookmarkhub.Counter(url, 3000);
       counter.twitter(function(number) {
         return appendLog('twitter', number, url);
       });
@@ -77,6 +77,13 @@
       linker.stumbleupon(function(linkObj) {
         return appendLog('stumbleupon', linkObj, url);
       });
+
+      var bookmarker;
+      bookmarker = new Bookmarkhub.Bookmarker(url);
+      bookmarker.all(function(data) {
+        return appendLog('all', data, url);
+      });
+
     };
 
     testing('http://google.com');
