@@ -6,7 +6,7 @@
 
   BH = window.Bookmarkhub;
 
-  BH.expires = 600000;
+  BH.expires = false;
 
   BH.trace = function() {
     var rest;
@@ -18,18 +18,24 @@
 
   BH.storage = {
     save: function(key, value, expires) {
-      var record;
+      var err, record;
       if (expires == null) {
-        expires = 0;
+        expires = BH.expires;
       }
       if (!localStorage) {
         return false;
       }
-      record = {
-        value: JSON.stringify(value),
-        timestamp: new Date().getTime() + expires
-      };
-      localStorage.setItem(key, JSON.stringify(record));
+      if (expires) {
+        record = {
+          value: JSON.stringify(value),
+          timestamp: new Date().getTime() + expires
+        };
+        try {
+          localStorage.setItem(key, JSON.stringify(record));
+        } catch (_error) {
+          err = _error;
+        }
+      }
       return value;
     },
     load: function(key) {
@@ -38,11 +44,44 @@
         return false;
       }
       record = JSON.parse(localStorage.getItem(key));
-      if (record) {
-        return new Date().getTime() < record.timestamp && JSON.parse(record.value);
-      } else {
+      if (!record) {
         return false;
       }
+      if (new Date().getTime() < record.timestamp) {
+        return JSON.parse(record.value);
+      } else {
+        return localStorage.removeItem(key);
+      }
+    },
+    all: function() {
+      var i, _i, _ref, _results;
+      if (!localStorage) {
+        return false;
+      }
+      if (!(localStorage.length > 0)) {
+        return false;
+      }
+      _results = [];
+      for (i = _i = 0, _ref = localStorage.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+        _results.push(localStorage.getItem(localStorage.key(i)));
+      }
+      return _results;
+    },
+    clear: function() {
+      var i, key, number, record, _i, _ref;
+      if (!localStorage) {
+        return false;
+      }
+      number = 0;
+      for (i = _i = 0, _ref = localStorage.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+        key = localStorage.key(i);
+        record = JSON.parse(localStorage.getItem(key));
+        if ((record != null ? record.timestamp : void 0) && new Date().getTime() > record.timestamp) {
+          localStorage.removeItem(key);
+          number++;
+        }
+      }
+      return number;
     }
   };
 
@@ -320,6 +359,86 @@
     };
 
     return Linker;
+
+  })();
+
+  BH.Bookmarker = (function() {
+    function Bookmarker(url, expires) {
+      this.url = url;
+      this.expires = expires != null ? expires : BH.expires;
+      this.linker = new Bookmarkhub.Linker(this.url, this.expires);
+    }
+
+    Bookmarker.prototype.all = function(callback) {
+      var me;
+      me = this;
+      return $.when(me.twitter(), me.facebook(), me.hatena(), me.google(), me.pocket(), me.linkedin(), me.delicious(), me.pinterest(), me.stumbleupon()).done(function(t, f, h, g, po, l, d, pi, s) {
+        return callback({
+          twitter: t,
+          facebook: f,
+          hatena: h,
+          google: g,
+          pocket: po,
+          linkedin: l,
+          delicious: d,
+          pinterest: pi,
+          stumbleupon: s
+        });
+      }).fail(function(err) {
+        return console.log(err);
+      });
+    };
+
+    Bookmarker.prototype.deferred = function(provider) {
+      var dfd;
+      dfd = $.Deferred();
+      this.linker[provider](function(data) {
+        if (data) {
+          return dfd.resolve(data);
+        } else {
+          return dfd.reject();
+        }
+      });
+      return dfd.promise();
+    };
+
+    Bookmarker.prototype.twitter = function() {
+      return this.deferred('twitter');
+    };
+
+    Bookmarker.prototype.facebook = function() {
+      return this.deferred('facebook');
+    };
+
+    Bookmarker.prototype.hatena = function() {
+      return this.deferred('hatena');
+    };
+
+    Bookmarker.prototype.google = function() {
+      return this.deferred('google');
+    };
+
+    Bookmarker.prototype.pocket = function() {
+      return this.deferred('pocket');
+    };
+
+    Bookmarker.prototype.linkedin = function() {
+      return this.deferred('linkedin');
+    };
+
+    Bookmarker.prototype.delicious = function() {
+      return this.deferred('delicious');
+    };
+
+    Bookmarker.prototype.pinterest = function() {
+      return this.deferred('pinterest');
+    };
+
+    Bookmarker.prototype.stumbleupon = function() {
+      return this.deferred('stumbleupon');
+    };
+
+    return Bookmarker;
 
   })();
 

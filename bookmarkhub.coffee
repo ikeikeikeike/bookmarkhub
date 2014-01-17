@@ -1,33 +1,56 @@
 window.Bookmarkhub or= {}
 BH = window.Bookmarkhub
 
-BH.expires = 600000
+BH.expires = no
 
 BH.trace = (rest...) ->
   console.log rest if no
 
 BH.storage = {
-  save: (key, value, expires=0) ->
+  save: (key, value, expires=BH.expires) ->
     return no unless localStorage
 
-    record =
-      value: JSON.stringify(value)
-      timestamp: new Date().getTime() + expires
-
-    # BH.trace key, JSON.stringify(record), expires
-    localStorage.setItem(key, JSON.stringify(record))
+    if expires
+      record =
+        value: JSON.stringify(value)
+        timestamp: new Date().getTime() + expires
+      try
+        localStorage.setItem(key, JSON.stringify(record))
+      catch err
 
     value
   ,
   load: (key) ->
     return no unless localStorage
 
+    # debugger
     record = JSON.parse(localStorage.getItem(key))
+    return no unless record
 
-    if record
-      new Date().getTime() < record.timestamp and JSON.parse(record.value)
+    if new Date().getTime() < record.timestamp
+      JSON.parse(record.value)
     else
-      no
+      localStorage.removeItem key
+  ,
+  all: ->
+    return no unless localStorage
+    return no unless localStorage.length > 0
+
+    localStorage.getItem(localStorage.key(i)) for i in [0..localStorage.length]
+  ,
+  clear: ->
+    return no unless localStorage
+
+    number = 0
+    for i in [0..localStorage.length]
+      key = localStorage.key(i)
+      record = JSON.parse(localStorage.getItem(key))
+
+      if record?.timestamp and new Date().getTime() > record.timestamp
+        localStorage.removeItem key
+        number++
+
+    number
 }
 
 
@@ -222,6 +245,62 @@ class BH.Linker
       callback
         count: count
         link: "http://www.stumbleupon.com/url/#{me.url}" if count
+
+
+class BH.Bookmarker
+
+  constructor: (@url, @expires=BH.expires) ->
+    @linker = new Bookmarkhub.Linker(@url, @expires)
+
+  all: (callback) ->
+    me = @
+
+    $.when(
+      me.twitter()
+      me.facebook()
+      me.hatena()
+      me.google()
+      me.pocket()
+      me.linkedin()
+      me.delicious()
+      me.pinterest()
+      me.stumbleupon()
+    ).done((t, f, h, g, po ,l, d, pi, s) ->
+      callback
+        twitter: t
+        facebook: f
+        hatena: h
+        google: g
+        pocket: po
+        linkedin: l
+        delicious: d
+        pinterest: pi
+        stumbleupon: s
+    )
+    .fail((err) ->
+      console.log err
+    )
+
+  deferred: (provider) ->
+    dfd = $.Deferred()
+    @linker[provider]((data) ->
+      if data
+        dfd.resolve(data)
+      else
+        dfd.reject()
+    )
+    dfd.promise()
+
+  twitter: -> @deferred('twitter')
+  facebook: -> @deferred('facebook')
+  hatena: -> @deferred('hatena')
+  google: -> @deferred('google')
+  pocket: -> @deferred('pocket')
+  linkedin: -> @deferred('linkedin')
+  delicious: -> @deferred('delicious')
+  pinterest: -> @deferred('pinterest')
+  stumbleupon: -> @deferred('stumbleupon')
+
 
 # TODO:
 BH.md5Hex = (->
