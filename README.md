@@ -1,4 +1,6 @@
-bookmarkhub
+Bookmarkhub
 ===========
 
-This is bookmarkhub
+```shell
+$ bower install bookmarkhub
+```
