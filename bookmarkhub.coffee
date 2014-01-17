@@ -15,7 +15,7 @@ BH.storage = {
         value: JSON.stringify(value)
         timestamp: new Date().getTime() + expires
       try
-        localStorage.setItem(key, JSON.stringify(record))
+        localStorage.setItem BH.md5Hex(key), JSON.stringify(record)
       catch err
         BH.storage.clear()
 
@@ -25,7 +25,7 @@ BH.storage = {
     return no unless localStorage
 
     try
-      record = JSON.parse(localStorage.getItem(key))
+      record = JSON.parse localStorage.getItem(BH.md5Hex(key))
     catch err
       BH.storage.clear()
 
@@ -147,12 +147,23 @@ class BH.Counter
       callback data.shares or 0
 
   google: (callback) ->
-    @cachedRequest BH.URLs.google(@url), dataType: 'json', (data) ->
-      callback if data.query?.results
+
+    result = BH.storage.load @cacheKey(@url)
+    if result
+      BH.trace "cached: #{@url}"
+      return callback result
+
+    me = @
+
+    @request BH.URLs.google(@url), dataType: 'json', (data) ->
+      result = if data.query?.results
         $(data.query.results.resources.content)
           .find('#aggregateCount').text()
       else
         0
+
+      BH.storage.save me.cacheKey(me.url), result, me.expires
+      callback result
 
   pocket: (callback) ->
     # debugger
@@ -162,12 +173,14 @@ class BH.Counter
       return callback result
 
     me = @
+
     @request BH.URLs.pocket(@url), dataType: 'json', (data) ->
       result = if data.query
         data.query.results
           .body.div.a.span.em.content
       else
         0
+
       BH.storage.save me.cacheKey(me.url), result, me.expires
       callback result
 
@@ -270,7 +283,7 @@ class BH.Bookmarker
   stumbleupon: -> @deferred('stumbleupon')
 
 
-# XXX: for delicious
+# XXX:
 BH.md5Hex = (->
   MD5_F = (x, y, z) ->
     (x & y) | (~x & z)

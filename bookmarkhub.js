@@ -31,7 +31,7 @@
           timestamp: new Date().getTime() + expires
         };
         try {
-          localStorage.setItem(key, JSON.stringify(record));
+          localStorage.setItem(BH.md5Hex(key), JSON.stringify(record));
         } catch (_error) {
           err = _error;
           BH.storage.clear();
@@ -45,7 +45,7 @@
         return false;
       }
       try {
-        record = JSON.parse(localStorage.getItem(key));
+        record = JSON.parse(localStorage.getItem(BH.md5Hex(key)));
       } catch (_error) {
         err = _error;
         BH.storage.clear();
@@ -209,11 +209,20 @@
     };
 
     Counter.prototype.google = function(callback) {
-      return this.cachedRequest(BH.URLs.google(this.url), {
+      var me, result;
+      result = BH.storage.load(this.cacheKey(this.url));
+      if (result) {
+        BH.trace("cached: " + this.url);
+        return callback(result);
+      }
+      me = this;
+      return this.request(BH.URLs.google(this.url), {
         dataType: 'json'
       }, function(data) {
         var _ref;
-        return callback(((_ref = data.query) != null ? _ref.results : void 0) ? $(data.query.results.resources.content).find('#aggregateCount').text() : 0);
+        result = ((_ref = data.query) != null ? _ref.results : void 0) ? $(data.query.results.resources.content).find('#aggregateCount').text() : 0;
+        BH.storage.save(me.cacheKey(me.url), result, me.expires);
+        return callback(result);
       });
     };
 
