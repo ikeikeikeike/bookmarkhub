@@ -82,7 +82,7 @@
       for (i = _i = 0, _ref = localStorage.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
         key = localStorage.key(i);
         record = JSON.parse(localStorage.getItem(key));
-        if ((record != null ? record.timestamp : void 0) && new Date().getTime() > record.timestamp) {
+        if ((record != null ? record.value : void 0) && (record != null ? record.timestamp : void 0) && new Date().getTime() > record.timestamp) {
           localStorage.removeItem(key);
           number++;
         }
@@ -364,7 +364,7 @@
       });
     };
 
-    Bookmarker.prototype.deferred = function(provider) {
+    Bookmarker.prototype._deferred = function(provider) {
       var dfd;
       dfd = $.Deferred();
       this.linker[provider](function(data) {
@@ -378,39 +378,39 @@
     };
 
     Bookmarker.prototype.twitter = function() {
-      return this.deferred('twitter');
+      return this._deferred('twitter');
     };
 
     Bookmarker.prototype.facebook = function() {
-      return this.deferred('facebook');
+      return this._deferred('facebook');
     };
 
     Bookmarker.prototype.hatena = function() {
-      return this.deferred('hatena');
+      return this._deferred('hatena');
     };
 
     Bookmarker.prototype.google = function() {
-      return this.deferred('google');
+      return this._deferred('google');
     };
 
     Bookmarker.prototype.pocket = function() {
-      return this.deferred('pocket');
+      return this._deferred('pocket');
     };
 
     Bookmarker.prototype.linkedin = function() {
-      return this.deferred('linkedin');
+      return this._deferred('linkedin');
     };
 
     Bookmarker.prototype.delicious = function() {
-      return this.deferred('delicious');
+      return this._deferred('delicious');
     };
 
     Bookmarker.prototype.pinterest = function() {
-      return this.deferred('pinterest');
+      return this._deferred('pinterest');
     };
 
     Bookmarker.prototype.stumbleupon = function() {
-      return this.deferred('stumbleupon');
+      return this._deferred('stumbleupon');
     };
 
     return Bookmarker;

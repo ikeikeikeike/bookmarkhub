@@ -51,7 +51,10 @@ BH.storage = {
       key = localStorage.key(i)
       record = JSON.parse(localStorage.getItem(key))
 
-      if record?.timestamp and new Date().getTime() > record.timestamp
+      if record?.value and
+         record?.timestamp and
+         new Date().getTime() > record.timestamp
+
         localStorage.removeItem key
         number++
 
@@ -262,7 +265,7 @@ class BH.Bookmarker
       BH.trace err
     )
 
-  deferred: (provider) ->
+  _deferred: (provider) ->
     dfd = $.Deferred()
     @linker[provider]((data) ->
       if data
@@ -272,15 +275,15 @@ class BH.Bookmarker
     )
     dfd.promise()
 
-  twitter: -> @deferred('twitter')
-  facebook: -> @deferred('facebook')
-  hatena: -> @deferred('hatena')
-  google: -> @deferred('google')
-  pocket: -> @deferred('pocket')
-  linkedin: -> @deferred('linkedin')
-  delicious: -> @deferred('delicious')
-  pinterest: -> @deferred('pinterest')
-  stumbleupon: -> @deferred('stumbleupon')
+  twitter: -> @_deferred('twitter')
+  facebook: -> @_deferred('facebook')
+  hatena: -> @_deferred('hatena')
+  google: -> @_deferred('google')
+  pocket: -> @_deferred('pocket')
+  linkedin: -> @_deferred('linkedin')
+  delicious: -> @_deferred('delicious')
+  pinterest: -> @_deferred('pinterest')
+  stumbleupon: -> @_deferred('stumbleupon')
 
 
 # XXX:
