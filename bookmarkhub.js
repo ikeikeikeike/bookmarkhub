@@ -8,10 +8,6 @@
 
   BH.EXPIRES = false;
 
-  BH.USER_AGENT = {
-    "User-Agent": "Mozilla/5.0 (compatible; Bookmarkhub/0.8.2; +https://github.com/ikeikeikeike/bookmarkhub)"
-  };
-
   BH.trace = function() {
     var rest;
     rest = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
@@ -181,8 +177,7 @@
       options = $.extend({
         url: url,
         type: 'get',
-        dataType: 'jsonp',
-        headers: BH.USER_AGENT
+        dataType: 'jsonp'
       }, rest.pop() || {});
       return $.ajax(options).done(function(data) {
         return callback(data);
