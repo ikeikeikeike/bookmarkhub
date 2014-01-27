@@ -1,13 +1,16 @@
 window.Bookmarkhub or= {}
 BH = window.Bookmarkhub
 
-BH.expires = no
+BH.EXPIRES = no
+
+BH.USER_AGENT =
+  "User-Agent": "Mozilla/5.0 (compatible; Bookmarkhub/0.8.1; +https://github.com/ikeikeikeike/bookmarkhub)"
 
 BH.trace = (rest...) ->
   console.log rest if no
 
 BH.storage = {
-  save: (key, value, expires=BH.expires) ->
+  save: (key, value, expires=BH.EXPIRES) ->
     return no unless localStorage
 
     if expires
@@ -101,7 +104,7 @@ class BH.URLs
 
 class BH.Counter
 
-  constructor: (@url, @expires=BH.expires) ->
+  constructor: (@url, @expires=BH.EXPIRES) ->
 
   cacheKey: (key) ->
     "Bookmarkhub.Counter.cacheKey(#{key})"
@@ -126,6 +129,7 @@ class BH.Counter
         url: url
         type: 'get'
         dataType: 'jsonp'
+        headers: BH.USER_AGENT
       ,
         rest.pop() || {}
 
@@ -207,7 +211,7 @@ class BH.Counter
 
 class BH.Linker
 
-  constructor: (@url, @expires=BH.expires) ->
+  constructor: (@url, @expires=BH.EXPIRES) ->
     @counter = new BH.Counter(@url, @expires)
 
   schemelessUrl: ->
@@ -233,7 +237,7 @@ class BH.Linker
 
 class BH.Bookmarker
 
-  constructor: (@url, @expires=BH.expires) ->
+  constructor: (@url, @expires=BH.EXPIRES) ->
     @linker = new Bookmarkhub.Linker(@url, @expires)
 
   all: (callback) ->

@@ -6,7 +6,11 @@
 
   BH = window.Bookmarkhub;
 
-  BH.expires = false;
+  BH.EXPIRES = false;
+
+  BH.USER_AGENT = {
+    "User-Agent": "Mozilla/5.0 (compatible; Bookmarkhub/0.8.1; +https://github.com/ikeikeikeike/bookmarkhub)"
+  };
 
   BH.trace = function() {
     var rest;
@@ -20,7 +24,7 @@
     save: function(key, value, expires) {
       var err, record;
       if (expires == null) {
-        expires = BH.expires;
+        expires = BH.EXPIRES;
       }
       if (!localStorage) {
         return false;
@@ -146,7 +150,7 @@
   BH.Counter = (function() {
     function Counter(url, expires) {
       this.url = url;
-      this.expires = expires != null ? expires : BH.expires;
+      this.expires = expires != null ? expires : BH.EXPIRES;
     }
 
     Counter.prototype.cacheKey = function(key) {
@@ -177,7 +181,8 @@
       options = $.extend({
         url: url,
         type: 'get',
-        dataType: 'jsonp'
+        dataType: 'jsonp',
+        headers: BH.USER_AGENT
       }, rest.pop() || {});
       return $.ajax(options).done(function(data) {
         return callback(data);
@@ -278,7 +283,7 @@
   BH.Linker = (function() {
     function Linker(url, expires) {
       this.url = url;
-      this.expires = expires != null ? expires : BH.expires;
+      this.expires = expires != null ? expires : BH.EXPIRES;
       this.counter = new BH.Counter(this.url, this.expires);
     }
 
@@ -340,7 +345,7 @@
   BH.Bookmarker = (function() {
     function Bookmarker(url, expires) {
       this.url = url;
-      this.expires = expires != null ? expires : BH.expires;
+      this.expires = expires != null ? expires : BH.EXPIRES;
       this.linker = new Bookmarkhub.Linker(this.url, this.expires);
     }
 
