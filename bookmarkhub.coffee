@@ -3,9 +3,6 @@ BH = window.Bookmarkhub
 
 BH.EXPIRES = no
 
-BH.USER_AGENT =
-  "User-Agent": "Mozilla/5.0 (compatible; Bookmarkhub/0.8.2; +https://github.com/ikeikeikeike/bookmarkhub)"
-
 BH.trace = (rest...) ->
   console.log rest if no
 
@@ -129,7 +126,6 @@ class BH.Counter
         url: url
         type: 'get'
         dataType: 'jsonp'
-        headers: BH.USER_AGENT
       ,
         rest.pop() || {}
 
