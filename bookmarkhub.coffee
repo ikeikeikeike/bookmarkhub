@@ -98,6 +98,9 @@ class BH.URLs
     yql = "SELECT * FROM json WHERE url='#{apiUrl}'"
     "http://query.yahooapis.com/v1/public/yql?q=#{yql}&format=json&diagnostics=true&callback="
 
+  @reddit: (url) ->
+    "http://buttons.reddit.com/button_info.json?url=#{encodeURIComponent url}"
+
 
 class BH.Counter
 
@@ -204,6 +207,10 @@ class BH.Counter
       callback data.query?.results
         .json.result?.views or 0
 
+  reddit: (callback) ->
+    @cachedRequest BH.URLs.reddit(@url), dataType: 'json', (data) ->
+      callback data.data.children[0]?.data.score or 0
+
 
 class BH.Linker
 
@@ -229,6 +236,7 @@ class BH.Linker
   delicious: (callback) -> @linker('delicious', "https://previous.delicious.com/url/#{BH.md5Hex @url}", callback)
   pinterest: (callback) -> @linker('pinterest', no, callback)
   stumbleupon: (callback) -> @linker('stumbleupon', "http://www.stumbleupon.com/url/#{@url}", callback)
+  reddit: (callback) -> @linker('reddit', "http://www.reddit.com/submit?url=#{@url}", callback)
 
 
 class BH.Bookmarker
@@ -249,7 +257,8 @@ class BH.Bookmarker
       me.delicious()
       me.pinterest()
       me.stumbleupon()
-    ).done((t, f, h, g, po ,l, d, pi, s) ->
+      me.reddit()
+    ).done((t, f, h, g, po ,l, d, pi, s, r) ->
       callback
         twitter: t
         facebook: f
@@ -260,6 +269,7 @@ class BH.Bookmarker
         delicious: d
         pinterest: pi
         stumbleupon: s
+        reddit: r
     )
     .fail((err) ->
       BH.trace err
@@ -284,6 +294,7 @@ class BH.Bookmarker
   delicious: -> @_deferred('delicious')
   pinterest: -> @_deferred('pinterest')
   stumbleupon: -> @_deferred('stumbleupon')
+  reddit: -> @_deferred('reddit')
 
 
 # XXX:

@@ -46,6 +46,9 @@
       counter.stumbleupon(function(number) {
         return appendLog('stumbleupon', number, url);
       });
+      counter.reddit(function(number) {
+        return appendLog('reddit', number, url);
+      });
 
 
       var linker;
@@ -77,11 +80,17 @@
       linker.stumbleupon(function(linkObj) {
         return appendLog('stumbleupon', linkObj, url);
       });
+      linker.reddit(function(linkObj) {
+        return appendLog('reddit', linkObj, url);
+      });
 
       var bookmarker;
       bookmarker = new Bookmarkhub.Bookmarker(url);
       bookmarker.all(function(data) {
-        return appendLog('all', data, url);
+        for (var provider in data) {
+          var o = data[provider];
+          $('body').append('<p>' + provider + ': count:' + o['count'] + ' link: <a href="'+ o['link'] +'">'+o['link']+'</a></p>');
+        }
       });
 
     };
@@ -100,6 +109,7 @@
     testing('http://blog.nodejs.org/2014/01/15/the-next-phase-of-node-js/index.html');
     testing('https://code.facebook.com/posts/218678814984400/scaling-mercurial-at-facebook/')
     testing('http://spock-framework-reference-documentation-ja.readthedocs.org/ja/spock-0.7-groovy-2.0_ja/index.html');
+    testing('http://techcrunch.com/2014/03/01/2014-could-be-the-tipping-point-for-female-founders-says-y-combinators-jessica-livingston/');
   });
   </script>
 </body>

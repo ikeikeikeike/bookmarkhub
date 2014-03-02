@@ -139,6 +139,10 @@
       return "http://query.yahooapis.com/v1/public/yql?q=" + yql + "&format=json&diagnostics=true&callback=";
     };
 
+    URLs.reddit = function(url) {
+      return "http://buttons.reddit.com/button_info.json?url=" + (encodeURIComponent(url));
+    };
+
     return URLs;
 
   })();
@@ -271,6 +275,15 @@
       });
     };
 
+    Counter.prototype.reddit = function(callback) {
+      return this.cachedRequest(BH.URLs.reddit(this.url), {
+        dataType: 'json'
+      }, function(data) {
+        var _ref;
+        return callback(((_ref = data.data.children[0]) != null ? _ref.data.score : void 0) || 0);
+      });
+    };
+
     return Counter;
 
   })();
@@ -333,6 +346,10 @@
       return this.linker('stumbleupon', "http://www.stumbleupon.com/url/" + this.url, callback);
     };
 
+    Linker.prototype.reddit = function(callback) {
+      return this.linker('reddit', "http://www.reddit.com/submit?url=" + this.url, callback);
+    };
+
     return Linker;
 
   })();
@@ -347,7 +364,7 @@
     Bookmarker.prototype.all = function(callback) {
       var me;
       me = this;
-      return $.when(me.twitter(), me.facebook(), me.hatena(), me.google(), me.pocket(), me.linkedin(), me.delicious(), me.pinterest(), me.stumbleupon()).done(function(t, f, h, g, po, l, d, pi, s) {
+      return $.when(me.twitter(), me.facebook(), me.hatena(), me.google(), me.pocket(), me.linkedin(), me.delicious(), me.pinterest(), me.stumbleupon(), me.reddit()).done(function(t, f, h, g, po, l, d, pi, s, r) {
         return callback({
           twitter: t,
           facebook: f,
@@ -357,7 +374,8 @@
           linkedin: l,
           delicious: d,
           pinterest: pi,
-          stumbleupon: s
+          stumbleupon: s,
+          reddit: r
         });
       }).fail(function(err) {
         return BH.trace(err);
@@ -411,6 +429,10 @@
 
     Bookmarker.prototype.stumbleupon = function() {
       return this._deferred('stumbleupon');
+    };
+
+    Bookmarker.prototype.reddit = function() {
+      return this._deferred('reddit');
     };
 
     return Bookmarker;
