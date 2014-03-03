@@ -62,6 +62,16 @@ BH.storage = {
 }
 
 
+# this is expected to be overridden.
+BH.requester = (options, callback) ->
+  $.ajax(
+    options
+  ).done((data) ->
+    callback data
+  ).fail (rest...) ->
+    BH.trace 'ajax fail: ', rest
+
+
 class BH.URLs
 
   @twitter: (url) ->
@@ -132,12 +142,7 @@ class BH.Counter
       ,
         rest.pop() || {}
 
-    $.ajax(
-      options
-    ).done((data) ->
-      callback data
-    ).fail (rest...) ->
-      BH.trace 'ajax fail: ', rest
+    BH.requester options, callback
 
   twitter: (callback) ->
     @cachedRequest BH.URLs.twitter(@url), (data) ->
@@ -204,12 +209,11 @@ class BH.Counter
 
   stumbleupon: (callback) ->
     @cachedRequest BH.URLs.stumbleupon(@url), dataType: 'json', (data) ->
-      callback data.query?.results
-        .json.result?.views or 0
+      callback data.query?.results.json.result?.views or 0
 
   reddit: (callback) ->
     @cachedRequest BH.URLs.reddit(@url), dataType: 'json', (data) ->
-      callback data.data.children[0]?.data.score or 0
+      callback data.data?.children[0]?.data.score or 0
 
 
 class BH.Linker

@@ -93,6 +93,18 @@
         }
       });
 
+      bookmarker.twitter()
+        .pipe(function(data) {
+          appendLog('twitter', data, url);
+          return bookmarker.facebook()
+        })
+        .then(function(data) {
+          appendLog('facebook', data, url);
+          return bookmarker.hatena()
+        })
+        .done(function(data) {
+          appendLog('hatena', data, url);
+        });
     };
 
     testing('http://google.com');

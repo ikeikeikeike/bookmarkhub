@@ -91,6 +91,16 @@
     }
   };
 
+  BH.requester = function(options, callback) {
+    return $.ajax(options).done(function(data) {
+      return callback(data);
+    }).fail(function() {
+      var rest;
+      rest = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      return BH.trace('ajax fail: ', rest);
+    });
+  };
+
   BH.URLs = (function() {
     function URLs() {}
 
@@ -183,13 +193,7 @@
         type: 'get',
         dataType: 'jsonp'
       }, rest.pop() || {});
-      return $.ajax(options).done(function(data) {
-        return callback(data);
-      }).fail(function() {
-        var rest;
-        rest = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        return BH.trace('ajax fail: ', rest);
-      });
+      return BH.requester(options, callback);
     };
 
     Counter.prototype.twitter = function(callback) {
@@ -279,8 +283,8 @@
       return this.cachedRequest(BH.URLs.reddit(this.url), {
         dataType: 'json'
       }, function(data) {
-        var _ref;
-        return callback(((_ref = data.data.children[0]) != null ? _ref.data.score : void 0) || 0);
+        var _ref, _ref1;
+        return callback(((_ref = data.data) != null ? (_ref1 = _ref.children[0]) != null ? _ref1.data.score : void 0 : void 0) || 0);
       });
     };
 
