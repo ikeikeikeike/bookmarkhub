@@ -216,6 +216,11 @@ class BH.Counter
       callback data.data?.children[0]?.data.score or 0
 
 
+# TODO:
+#
+# - pinterest: http://www.pinterest.com/pin/create/link/?url=http://google.com&media=http://j.mp/1iytKA0&description=sample
+# - pocket
+#
 class BH.Linker
 
   constructor: (@url, @expires=BH.EXPIRES) ->
@@ -232,11 +237,11 @@ class BH.Linker
         link: link if count
 
   twitter: (callback) -> @linker('twitter', "https://twitter.com/search?q=#{@schemelessUrl()}", callback)
-  facebook: (callback) -> @linker('facebook', no, callback)
+  facebook: (callback) -> @linker('facebook', "https://www.facebook.com/sharer/sharer.php?u=#{@url}", callback)
   hatena: (callback) -> @linker('hatena', "http://b.hatena.ne.jp/entry/#{@schemelessUrl()}", callback)
-  google: (callback) -> @linker('google', no, callback)
+  google: (callback) -> @linker('google', "https://plus.google.com/share?url=#{@url}", callback)
   pocket: (callback) -> @linker('pocket', no, callback)
-  linkedin: (callback) -> @linker('linkedin', no, callback)
+  linkedin: (callback) -> @linker('linkedin', "http://www.linkedin.com/shareArticle?url=#{@url}", callback)
   delicious: (callback) -> @linker('delicious', "https://previous.delicious.com/url/#{BH.md5Hex @url}", callback)
   pinterest: (callback) -> @linker('pinterest', no, callback)
   stumbleupon: (callback) -> @linker('stumbleupon', "http://www.stumbleupon.com/url/#{@url}", callback)

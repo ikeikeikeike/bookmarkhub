@@ -95,15 +95,15 @@
 
       bookmarker.twitter()
         .pipe(function(data) {
-          appendLog('twitter', data, url);
+          appendLog('bookmarker.twitter().pipe', data, url);
           return bookmarker.facebook()
         })
         .then(function(data) {
-          appendLog('facebook', data, url);
+          appendLog('bookmarker.facebook().then', data, url);
           return bookmarker.hatena()
         })
         .done(function(data) {
-          appendLog('hatena', data, url);
+          appendLog('bookmarker.hatena().done', data, url);
         });
     };
 

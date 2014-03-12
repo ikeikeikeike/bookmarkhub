@@ -319,7 +319,7 @@
     };
 
     Linker.prototype.facebook = function(callback) {
-      return this.linker('facebook', false, callback);
+      return this.linker('facebook', "https://www.facebook.com/sharer/sharer.php?u=" + this.url, callback);
     };
 
     Linker.prototype.hatena = function(callback) {
@@ -327,7 +327,7 @@
     };
 
     Linker.prototype.google = function(callback) {
-      return this.linker('google', false, callback);
+      return this.linker('google', "https://plus.google.com/share?url=" + this.url, callback);
     };
 
     Linker.prototype.pocket = function(callback) {
@@ -335,7 +335,7 @@
     };
 
     Linker.prototype.linkedin = function(callback) {
-      return this.linker('linkedin', false, callback);
+      return this.linker('linkedin', "http://www.linkedin.com/shareArticle?url=" + this.url, callback);
     };
 
     Linker.prototype.delicious = function(callback) {
