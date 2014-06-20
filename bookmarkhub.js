@@ -309,7 +309,7 @@
       return this.counter[provider](function(count) {
         return callback({
           count: count,
-          link: count ? link : void 0
+          link: link ? link : void 0
         });
       });
     };

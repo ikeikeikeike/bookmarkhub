@@ -234,7 +234,7 @@ class BH.Linker
     @counter[provider] (count) ->
       callback
         count: count
-        link: link if count
+        link: link if link
 
   twitter: (callback) -> @linker('twitter', "https://twitter.com/search?q=#{@schemelessUrl()}", callback)
   facebook: (callback) -> @linker('facebook', "https://www.facebook.com/sharer/sharer.php?u=#{@url}", callback)
